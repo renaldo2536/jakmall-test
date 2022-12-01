@@ -7,6 +7,7 @@ import SplashScreen from "react-native-splash-screen";
  */
 import Navigation from "./src/navigation";
 import { isAndroid } from "@freakycoder/react-native-helpers";
+import { RecoilRoot } from "recoil";
 
 LogBox.ignoreAllLogs();
 
@@ -27,9 +28,9 @@ const App = () => {
   }, [scheme, isDarkMode]);
 
   return (
-    <>
+    <RecoilRoot>
       <Navigation />
-    </>
+    </RecoilRoot>
   );
 };
 

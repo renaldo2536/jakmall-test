@@ -23,6 +23,7 @@ const Category: React.FC<HomeScreenProps> = () => {
     const { category_name, amount } = data;
     const jokesResponse = await getJokesData(category_name, amount).then(
       (res) => {
+        //@ts-ignore
         const { jokes } = res;
         return jokes;
       },
@@ -35,6 +36,7 @@ const Category: React.FC<HomeScreenProps> = () => {
     const { category_name, amount } = data;
     const jokesResponse = await getJokesData(category_name, amount + 1).then(
       (res) => {
+        //@ts-ignore
         const { jokes } = res;
         return jokes;
       },
@@ -54,7 +56,7 @@ const Category: React.FC<HomeScreenProps> = () => {
         contentContainerStyle={{
           flexDirection: "column",
         }}
-        style={{ paddingVertical: 15 }}
+        style={{ paddingVertical: 15, height: 550 }}
         data={dataList}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => {
@@ -88,16 +90,10 @@ const Category: React.FC<HomeScreenProps> = () => {
               <Jokes data={sub_category} isExpanded={item?.isExpanded} />
               {sub_category?.length < 4 && item?.isExpanded && (
                 <RNBounceable
-                  style={{
-                    alignSelf: "center",
-                    width: "90%",
-                    padding: 10,
-                    marginVertical: 5,
-                    borderWidth: 1,
-                  }}
+                  style={styles.addMoreItem}
                   onPress={() => addMoreItem(item)}
                 >
-                  <Text style={{ color: "black", textAlign: "center" }}>
+                  <Text style={styles.addMoreItemText}>
                     Add more Items
                   </Text>
                 </RNBounceable>

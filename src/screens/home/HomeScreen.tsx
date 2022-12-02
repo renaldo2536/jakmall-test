@@ -52,7 +52,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
         Jakmall Test
       </Text>
       <RNBounceable
-        style={{ borderWidth: 1, padding: 10, borderRadius: 5 }}
+        style={styles.refresh}
         onPress={() => setRefresh(!refresh)}
       >
         <Icon name="refresh-outline" type="Ionicons" color="black" size={25} />

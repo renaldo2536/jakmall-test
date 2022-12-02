@@ -7,6 +7,8 @@ interface Style {
   shadowContainer: ViewStyle;
   topText: ViewStyle;
   notTopText: ViewStyle;
+  addMoreItem: ViewStyle;
+  addMoreItemText: ViewStyle;
 }
 
 export default () => {
@@ -60,6 +62,17 @@ export default () => {
       textAlign: "center",
       backgroundColor: "blue",
       borderRadius: 5,
+    },
+    addMoreItem: {
+      alignSelf: "center",
+      width: "90%",
+      padding: 10,
+      marginVertical: 5,
+      borderWidth: 1,
+    },
+    addMoreItemText: {
+      color: "black",
+      textAlign: "center",
     },
   });
 };

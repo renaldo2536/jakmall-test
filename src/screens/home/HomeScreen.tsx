@@ -1,17 +1,16 @@
-import React, { useEffect, useMemo } from "react";
-import { View, FlatList } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import createStyles from "./HomeScreen.style";
-import Header from "./components/Header";
 import Category from "./components/Category";
 import { getCategoryData } from "@services/api/Category";
 import { IData, IProductItem } from "@services/models";
-import {
-  categoryDataAtom,
-  dataListAtom,
-} from "@services/storage/Atom";
+import { categoryDataAtom, dataListAtom } from "@services/storage/Atom";
 import { useSetRecoilState } from "recoil";
+import Text from "@shared-components/text-wrapper/TextWrapper";
+import Icon from "react-native-dynamic-vector-icons";
+import { View } from "react-native";
+import RNBounceable from "@freakycoder/react-native-bounceable";
 
 interface HomeScreenProps {}
 
@@ -20,6 +19,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
   const styles = useMemo(() => createStyles(theme), [theme]);
   const setCategoryList = useSetRecoilState(categoryDataAtom);
   const setDataList = useSetRecoilState<IData[]>(dataListAtom);
+  const [refresh, setRefresh] = useState(false);
 
   const localData: IData[] = [];
 
@@ -33,6 +33,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           category_name: shiftedData[i],
           isExpanded: false,
           sub_category: [] as IProductItem[],
+          amount: 2,
         };
         localData.push(data);
       }
@@ -43,9 +44,23 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
   useEffect(() => {
     getCategory();
-  }, []);
+  }, [refresh]);
 
-  return <SafeAreaView style={styles.container}>{<Category />}</SafeAreaView>;
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text h1 color="black" style={{ marginTop: 30 }}>
+        Jakmall Test
+      </Text>
+      <RNBounceable
+        style={{ borderWidth: 1, padding: 10, borderRadius: 5 }}
+        onPress={() => setRefresh(!refresh)}
+      >
+        <Icon name="refresh-outline" type="Ionicons" color="black" size={25} />
+      </RNBounceable>
+
+      <Category />
+    </SafeAreaView>
+  );
 };
 
 export default HomeScreen;

@@ -1,4 +1,4 @@
-import { IHiddenData, IProductItem, IData } from "@services/models";
+import { IData } from "@services/models";
 import { atom } from "recoil";
 
 export const categoryDataAtom = atom({
@@ -6,20 +6,13 @@ export const categoryDataAtom = atom({
   default: [],
 });
 
-export const jokesListAtom = atom({
-    key: "jokesListAtom",
-    default: {} as IProductItem[],
-});
-
 export const dataListAtom = atom({
   key: "dataListAtom",
   default: {} as IData[],
 });
 
-export const hiddenIndexDataAtom = atom({
-  key: "hiddenIndexData",
-  default: {
-    key: '',
-    hidden: false,
-  } as IHiddenData,
+export const amountAtom = atom({
+  key: "amountAtom",
+  default: 3,
 });
+

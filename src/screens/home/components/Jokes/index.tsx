@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import RNBounceable from "@freakycoder/react-native-bounceable";
 import createStyles from "./index.style";
@@ -25,9 +25,16 @@ const Jokes = (props: jokesProps) => {
       style={{ display: isExpanded ? "flex" : "none" }}
       showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => (
-        <RNBounceable style={styles.shadowContainer}>
-          <Text style={{ color: "black" }}>{item.joke}</Text>
-        </RNBounceable>
+        <>
+          <RNBounceable
+            style={styles.shadowContainer}
+            onPress={() => {
+              Alert.alert(item.joke);
+            }}
+          >
+            <Text style={{ color: "black" }}>{item.joke}</Text>
+          </RNBounceable>
+        </>
       )}
     />
   );

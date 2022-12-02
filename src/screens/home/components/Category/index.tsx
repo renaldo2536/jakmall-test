@@ -1,21 +1,16 @@
-import React, { useMemo, useState } from "react";
-import { SectionList, Text, View } from "react-native";
+import React, { useMemo } from "react";
+import { Text, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import RNBounceable from "@freakycoder/react-native-bounceable";
 import createStyles from "./index.style";
 import { FlatList } from "react-native-gesture-handler";
-import {
-  categoryDataAtom,
-  dataListAtom,
-  hiddenIndexDataAtom,
-  jokesListAtom,
-} from "@services/storage/Atom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { amountAtom, dataListAtom } from "@services/storage/Atom";
+import { useRecoilState } from "recoil";
 import Icon from "react-native-dynamic-vector-icons";
 import Jokes from "../Jokes";
 import { getJokesData } from "@services/api/Jokes";
-import { IData, IProductItem } from "@services/models";
-import { manipulateJokesData } from "utils";
+import { IData } from "@services/models";
+import { manipulateJokesData, moveToTop } from "utils";
 
 interface HomeScreenProps {}
 
@@ -25,12 +20,32 @@ const Category: React.FC<HomeScreenProps> = () => {
   const [dataList, setDataList] = useRecoilState(dataListAtom);
 
   const onPressCategory = async (data: IData) => {
-    const jokesResponse = await getJokesData(data.category_name).then((res) => {
-      const { jokes } = res;
-      return jokes as IProductItem[];
-    });
-    const newList = manipulateJokesData(dataList, data, jokesResponse)
-    setDataList(newList)
+    const { category_name, amount } = data;
+    const jokesResponse = await getJokesData(category_name, amount).then(
+      (res) => {
+        const { jokes } = res;
+        return jokes;
+      },
+    );
+    const newList = manipulateJokesData(dataList, data, jokesResponse, true);
+    setDataList(newList);
+  };
+
+  const addMoreItem = async (data: IData) => {
+    const { category_name, amount } = data;
+    const jokesResponse = await getJokesData(category_name, amount + 1).then(
+      (res) => {
+        const { jokes } = res;
+        return jokes;
+      },
+    );
+    const newList = manipulateJokesData(dataList, data, jokesResponse, false);
+    setDataList(newList);
+  };
+
+  const moveArrayToTop = (index: number) => {
+    const newData = moveToTop(dataList, index, 0);
+    setDataList(newData);
   };
 
   const Content = () => {
@@ -43,15 +58,26 @@ const Category: React.FC<HomeScreenProps> = () => {
         data={dataList}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => {
+          const categoryString = `${index + 1}     ${item.category_name}`;
+          const { sub_category } = item;
           return (
             <React.Fragment>
               <RNBounceable
                 style={styles.shadowContainer}
                 onPress={() => onPressCategory(item)}
               >
-                <Text style={{ color: "black" }}>{`${index + 1}     ${
-                  item.category_name
-                }`}</Text>
+                <Text style={{ color: "black", width: "40%" }}>
+                  {categoryString}
+                </Text>
+                <View style={{ width: "30%" }}>
+                  {index === 0 && <Text style={styles.topText}>TOP</Text>}
+                  <RNBounceable onPress={() => moveArrayToTop(index)}>
+                    {index !== 0 && (
+                      <Text style={styles.notTopText}>GO TOP</Text>
+                    )}
+                  </RNBounceable>
+                </View>
+
                 <Icon
                   name="caret-down-outline"
                   type="Ionicons"
@@ -59,9 +85,23 @@ const Category: React.FC<HomeScreenProps> = () => {
                   size={20}
                 />
               </RNBounceable>
-              <View>
-                <Jokes data={item?.sub_category} isExpanded={item?.isExpanded}/>
-              </View>
+              <Jokes data={sub_category} isExpanded={item?.isExpanded} />
+              {sub_category?.length < 4 && item?.isExpanded && (
+                <RNBounceable
+                  style={{
+                    alignSelf: "center",
+                    width: "90%",
+                    padding: 10,
+                    marginVertical: 5,
+                    borderWidth: 1,
+                  }}
+                  onPress={() => addMoreItem(item)}
+                >
+                  <Text style={{ color: "black", textAlign: "center" }}>
+                    Add more Items
+                  </Text>
+                </RNBounceable>
+              )}
             </React.Fragment>
           );
         }}
